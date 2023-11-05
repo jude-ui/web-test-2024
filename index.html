@@ -46,9 +46,19 @@
       color: rgba(0,0,0,0);
       cursor: pointer;
     }
+    .file_comm{display:flex;gap:10px;position: relative}
+    .file_comm label{min-width: 80px;border-radius: 3px}
+    .file_comm input[type=file]:focus-visible ~ label{outline:#265DC5 auto 1px}
+    .file_comm input[type=file]{position: absolute;top:0;left: 0;width:0;height:0;margin:0;padding:0;border:0;opacity: 0.001;cursor: pointer}
+    .file_comm .inp_comm{overflow:hidden;text-overflow:ellipsis}
   </style>
 </head>
 <body>
+  <div class="file_comm">
+    <input type="text" class="inp_comm" readonly>
+    <input type="file" id="inpFile" title="연결할 label 태그가 없다면 title 속성은 필수로 넣어주세요.">
+    <label for="inpFile" class="btn btn5">File</label>
+  </div>
   <div class="date_comm">
     <input style="background-color: #fff" type="date" title="연결할 label 태그가 없다면 title 속성은 필수로 넣어주세요.">
     <i class="fa-solid fa-calendar-lines"></i>
@@ -88,6 +98,19 @@
   <div id="tabpanel2" role="tabpanel" aria-labelledby="탭 패널 2">일이삼사</div>
   <div id="tabpanel3" role="tabpanel" aria-labelledby="탭 패널 3">일이삼사</div>
   <div id="tabpanel4" role="tabpanel" aria-labelledby="탭 패널 4">일이삼사</div> -->
-  
+
+  <script>
+  // File add
+  $('.file_comm').each(function() {
+    $(this).find('input[type="file"]').on('input', function() {
+      const $self = $(this);
+      const fileFullPath = $self.val();
+
+      if ($self.prev('.inp_comm').length) {
+        $self.prev('.inp_comm').val(fileFullPath.replace(/^.*[\\\/]/, ''));
+      }
+    });
+  });
+  </script>
 </body>
 </html>
