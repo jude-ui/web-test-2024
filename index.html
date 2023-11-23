@@ -55,7 +55,7 @@
   </style>
 </head>
 <body>
-  <a href=#none" role="button" aria-expanded="false">테스트 태그</a>
+  <a class="toggle" href=#none" role="button" aria-expanded="false">테스트 태그</a>
   <div class="file_comm">
     <input type="text" class="inp_comm" readonly>
     <input type="file" id="inpFile">
@@ -113,6 +113,13 @@
       }
     });
   });
+  $('.toggle').on('click', function(){
+      if($(this).attr('aria-expanded') === 'false') {
+        $(this).attr('aria-expanded', 'true')
+      } else {
+        $(this).attr('aria-expanded', 'false')
+      }
+  })
   </script>
 </body>
 </html>
