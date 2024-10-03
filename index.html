@@ -40,10 +40,10 @@
   <strong class="title" aria-hidden="true">aria-expanded 값의 토글이 가능하고 role 속성이 버튼인 a 태그</strong>
   <a href="#none" class="sns" role="button" aria-expanded="false">SNS</a>
   <ul class="list_sns">
-    <li><a href="#none">카카오톡</a></li>
-    <li><a href="#none">X</a></li>
-    <li><a href="#none">인스타그램</a></li>
-    <li><a href="#none">페이스북</a></li>
+    <li><a href="#none" target="_blank">카카오톡</a></li>
+    <li><a href="#none" target="_blank">X</a></li>
+    <li><a href="#none" target="_blank">인스타그램</a></li>
+    <li><a href="#none" target="_blank">페이스북</a></li>
   </ul>
   <br>
   <br>
@@ -90,6 +90,34 @@
   <br>
   <br>
 
+  <strong class="title" aria-hidden="true">간단한 table(th에 scope가 있는)</strong>
+  <table class="tbl">
+    <caption class="blind">이 표는 제목이 숨겨져 있습니다.</caption>
+    <colgroup>
+      <col>
+      <col>
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col">월요일</th>
+        <th scope="col">화요일</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>국어</td>
+        <td>수학</td>
+      </tr>
+      <tr>
+        <td>영어</td>
+        <td>체육</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br>
+  <br>
+
   <strong class="title" aria-hidden="true">복잡한 table(th에 scope가 없는)</strong>
   <table class="tbl">
     <caption class="blind">이 표는 제목이 숨겨져 있습니다.</caption>
@@ -118,6 +146,43 @@
       </tr>
       <tr>
         <th>3교시</th>
+        <td>수학</td>
+        <td>국어</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br>
+  <br>
+
+  <strong class="title" aria-hidden="true">복잡한 table(th에 scope가 있는)</strong>
+  <table class="tbl">
+    <caption class="blind">이 표는 제목이 숨겨져 있습니다.</caption>
+    <colgroup>
+      <col>
+      <col>
+      <col>
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col">/</th>
+        <th scope="col">월요일</th>
+        <th scope="col">화요일</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1교시</th>
+        <td>국어</td>
+        <td>수학</td>
+      </tr>
+      <tr>
+        <th scope="row">2교시</th>
+        <td>영어</td>
+        <td>체육</td>
+      </tr>
+      <tr>
+        <th scope="row">3교시</th>
         <td>수학</td>
         <td>국어</td>
       </tr>
