@@ -7,12 +7,142 @@
   <meta name="format-detection" content="telephone=no"><!-- 아이폰에서 일반숫자나, Datetime 등의 타입 전화번호 인식 방지 -->
   <title>TEST</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+  <link rel="stylesheet" href="./reset.css">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.js"></script>
+  <style>
+    body{padding:20px}
+    .title{display: block;font-weight: 900;font-size: 20px;line-height: 1.3;color:royalblue}
+    a{font-size: 16px}
 
+    .sns{display: inline-block;padding:5px 10px;border:1px solid #000;border-radius: 5px;vertical-align: top}
+    .list_sns{display: none;width: 150px;margin-top: 5px;padding:5px 10px;border-radius: 5px;border:1px solid #000}
+    .list_sns li + li{border-top:1px solid #ddd}
+    .list_sns a{display: block;padding:5px 0}
+    .sns[aria-expanded="true"] + .list_sns{display: block}
+    .tab{display: flex;gap:10px;padding:10px 0 0}
+    .tab a{padding:5px 10px;border:1px solid #000}
+    .tab a[aria-selected="true"]{border-color:#0e62fb;font-weight: 700;color:#fff;background: #0e62fb}
+    .tbl{width: 100%;max-width:300px;border-top:1px solid #000;border-left: 1px solid #000}
+    .tbl th, .tbl td{padding:7px;font-size: 16px;line-height: 1.3;border-bottom: 1px solid #000;border-right: 1px solid #000}
+  </style>
 </head>
 <body>
-  test
+  <strong class="title" aria-hidden="true">일반 a 태그</strong>
+  <a href="#none">회원정보수정</a>
+  <br>
+  <br>
+
+  <strong class="title" aria-hidden="true">role 속성이 버튼인 a 태그</strong>
+  <a href="#none" role="button">공지사항</a>
+  <br>
+  <br>
+  
+  <strong class="title" aria-hidden="true">aria-expanded 값의 토글이 가능하고 role 속성이 버튼인 a 태그</strong>
+  <a href="#none" class="sns" role="button" aria-haspopup="true" aria-expanded="false">SNS</a>
+  <ul class="list_sns">
+    <li><a href="#none">카카오톡</a></li>
+    <li><a href="#none">X</a></li>
+    <li><a href="#none">인스타그램</a></li>
+    <li><a href="#none">페이스북</a></li>
+  </ul>
+  <br>
+  <br>
+
+  <strong class="title" aria-hidden="true">탭 접근성 보완하기</strong>
+  <ul role="tablist" class="tab">
+    <li role="presentation"><a href="#none" role="tab" aria-selected="true">전체</a></li>
+    <li role="presentation"><a href="#none" role="tab" aria-selected="false">가</a></li>
+    <li role="presentation"><a href="#none" role="tab" aria-selected="false">나</a></li>
+    <li role="presentation"><a href="#none" role="tab" aria-selected="false">다</a></li>
+    <li role="presentation"><a href="#none" role="tab" aria-selected="false">라</a></li>
+    <li role="presentation"><a href="#none" role="tab" aria-selected="false">마</a></li>
+    <li role="presentation"><a href="#none" role="tab" aria-selected="false">바</a></li>
+  </ul>
+
+  <br>
+  <br>
+
+  <strong class="title" aria-hidden="true">간단한 table(th에 scope가 없는)</strong>
+  <table class="tbl">
+    <caption class="blind">이 표는 제목이 숨겨져 있습니다.</caption>
+    <colgroup>
+      <col>
+      <col>
+    </colgroup>
+    <thead>
+      <tr>
+        <th>월요일</th>
+        <th>화요일</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>국어</td>
+        <td>수학</td>
+      </tr>
+      <tr>
+        <td>영어</td>
+        <td>체육</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <br>
+  <br>
+
+  <strong class="title" aria-hidden="true">복잡한 table(th에 scope가 없는)</strong>
+  <table class="tbl">
+    <caption class="blind">이 표는 제목이 숨겨져 있습니다.</caption>
+    <colgroup>
+      <col>
+      <col>
+      <col>
+    </colgroup>
+    <thead>
+      <tr>
+        <th>/</th>
+        <th>월요일</th>
+        <th>화요일</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>1교시</th>
+        <td>국어</td>
+        <td>수학</td>
+      </tr>
+      <tr>
+        <th>2교시</th>
+        <td>영어</td>
+        <td>체육</td>
+      </tr>
+      <tr>
+        <th>3교시</th>
+        <td>수학</td>
+        <td>국어</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <script>
+    $('.sns').on('click', function(){
+      if($(this).attr('aria-expanded') === 'false') {
+        $(this).attr('aria-expanded', 'true')
+      } else {
+        $(this).attr('aria-expanded', 'false')
+      }
+    })
+    // $('.toggle').on('click', function(){
+    //   $(this).attr('aria-expanded', function(_, attr) {
+    //     return attr === 'false' ? 'true' : 'false';
+    //   });
+    // });
+
+    $('.tab a').on('click', function() {
+      $('.tab a').attr('aria-selected', 'false')
+      $(this).attr('aria-selected', 'true')
+    })
+  </script>
 </body>
 </html>
