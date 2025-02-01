@@ -257,12 +257,12 @@ const uiCompo = (function () {
 
     init() {
       // 동적 이벤트 할당 코드는 관심강좌 팝업과 같은 상황에 따라 열리는 팝업을 다르게 가져갈 시 주의
-      $(document).off('click', '[data-open-layer]', this._handleOpenLayer)
-                  .on('click', '[data-open-layer]', this._handleOpenLayer)
-      $(document).off('click', '[data-close-layer]', this._handleCloseLayer)
-                  .on('click', '[data-close-layer]', this._handleCloseLayer)
-      $(document).off('keydown', this.defaultLayerName, this._bindKeyEvt)
-                  .on('keydown', this.defaultLayerName, this._bindKeyEvt)
+      $(document).on('click', '[data-open-layer]', this._handleOpenLayer)
+                  // .on('click', '[data-open-layer]', this._handleOpenLayer)
+      $(document).on('click', '[data-close-layer]', this._handleCloseLayer)
+                  // .on('click', '[data-close-layer]', this._handleCloseLayer)
+      // $(document).off('keydown', this.defaultLayerName, this._bindKeyEvt)
+                  // .on('keydown', this.defaultLayerName, this._bindKeyEvt)
 
       this._executeCallback(this, 'init')
     }
