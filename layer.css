@@ -54,8 +54,8 @@ only screen and (min-width: 1024px) {
 }
 
 
-.d_popup_vod{display: flex;position:fixed;top:0;left:0;right:0;bottom:0;z-index: 9999;background:rgba(0,0,0,.8);opacity: 0;visibility: hidden;transition: all .3s}
-.d_popup_vod.on{opacity: 1;visibility: visible}
+.d_popup_vod{display: none;position:fixed;top:0;left:0;right:0;bottom:0;z-index: 9999;background:rgba(0,0,0,.8)}
+.d_popup_vod.on{display: flex}
 .d_popup_vod .inner_popup{position: relative;width:800px;max-height: calc(100% - 100px);max-width: calc(100% - 100px);margin: auto;text-align: center;aspect-ratio: 16 / 9}
 .d_popup_vod iframe{width:100%;height: 100%;border:0;vertical-align: top}
 .d_popup_vod .btn_close{position: absolute;top:-16px;left: 100%;padding:10px;border:0;font-size:40px;color:#fff;background: none;cursor: pointer}
