@@ -1,0 +1,62 @@
+.d_layer_comm, dialog{display: flex;align-items: center;justify-content: center;position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 9999;background: rgba(0, 0, 0, 0.6);opacity: 0;visibility: hidden;transition: all 0.3s}
+.d_layer_comm:focus, dialog:focus{outline: 3px solid #2178ff;outline-offset: -4px}
+.d_layer_comm.on, dialog[open]{opacity: 1;visibility: visible}
+dialog::backdrop{display: none}
+.d_layer_comm .inner_layer, dialog .inner_layer{overflow: auto;position: relative;max-width: calc(100% - 40px);max-height: calc(100% - 60px);width: 650px;border-radius: 5px;background: #fff}
+.d_layer_comm.sm .inner_layer, dialog.sm .inner_layer{width: 340px}
+.d_layer_comm.md .inner_layer, dialog.md .inner_layer{width: 520px}
+.d_layer_comm.lg .inner_layer, dialog.lg .inner_layer{width: 900px}
+.d_layer_comm.xlg .inner_layer, dialog.xlg .inner_layer{width: 1350px}
+
+.d_layer_comm .layer_head{background: #000}
+.d_layer_comm .layer_head > strong{display: block;padding:15px 65px 15px 20px;font-size: 16px;line-height: 20px;color:#fff}
+.d_layer_comm .layer_body{padding:20px}
+.d_layer_comm .layer_body > .tit_layer{display: flex;gap:10px;align-items: flex-start;padding-bottom: 20px;font-weight: 800;font-size: 22px;line-height: 27px;color:#000}
+.d_layer_comm .list li{font-size: 14px;line-height: 19px}
+.d_layer_comm .btn_close{display: flex;justify-content: center;align-items: center;position: absolute;top:0;right: 0;width: 55px;height: 50px}
+.d_layer_comm .btn_close:before{@include fa;font-size: 28px;color:#fff;content:'\f00d'}
+
+.d_layer_comm .layer_body > .tit_layer .d_tag{flex:none;margin-right: 10px;padding:3px 10px;border-radius: 6px}
+.d_layer_comm .d_list_gallery.type_poster{grid-template-columns: 1fr;padding-top: 0}
+.d_layer_comm .d_list_gallery.type_poster dl{row-gap:0;padding-top: 0}
+.d_layer_comm .d_list_gallery.type_poster dl.tit_none{grid-template-columns: 1fr}
+.d_layer_comm .d_list_gallery.type_poster dl.tit_none dt{position: absolute;clip-path: rect(0 0 0 0);width: 1px;height: 1px;margin: -1px;padding:0;overflow: hidden}
+.d_layer_comm .d_list_gallery.type_poster .wrap_thumb{width: 60%}
+.d_layer_comm .d_list_gallery.type_poster .wrap_thumb + .cont_thumb{padding-top: 20px}
+.d_layer_comm .d_list_gallery.type_poster .cont_thumb{padding:0}
+.d_layer_comm .d_list_gallery.type_poster .align_wrap + strong{padding-top: 10px}
+.d_layer_comm .d_list_gallery.type_poster strong{padding: 0;margin-bottom:10px}
+.d_layer_comm .d_list_gallery.type_poster strong .d_tag{margin-right: 10px;padding:4px 10px 3px;border-radius: 5px;vertical-align: top}
+.d_layer_comm .d_list_gallery.type_poster li{padding:0;border:0}
+.d_layer_comm .d_list_gallery.type_poster :not(.wrap_thumb) + .cont_thumb{opacity: 1}
+
+@media
+only screen and (min-width: 768px) {
+  .d_layer_comm .d_list_gallery.type_poster li{gap:20px;flex-direction: row}
+  .d_layer_comm .d_list_gallery.type_poster .wrap_thumb{width: 33.051%}
+  .d_layer_comm .d_list_gallery.type_poster strong{margin-bottom: 15px}
+  .d_layer_comm .d_list_gallery.type_poster strong .d_tag{padding:3px 10px 2px}
+  .d_layer_comm .d_list_gallery.type_poster .wrap_thumb + .cont_thumb{padding-top: 10px}
+}
+
+@media
+only screen and (min-width: 1024px) {
+  .d_layer_comm .layer_body{padding:30px}
+  .d_layer_comm .layer_head > strong{padding:15px 69px 15px 30px;font-size: 20px;line-height: 24px}
+  .d_layer_comm .layer_body > .tit_layer{font-size: 26px;line-height: 29px}
+  .d_layer_comm .list li{font-size: 16px;line-height: 22px}
+  .d_layer_comm .btn_close{width: 59px;height: 54px}
+
+  .d_layer_comm .d_list_gallery.type_poster li{gap:30px}
+  .d_layer_comm .d_list_gallery.type_poster .wrap_thumb + .cont_thumb{padding-top: 15px}
+  .d_layer_comm .d_list_gallery.type_poster strong{line-height: 32px;word-break: break-all;}
+  .d_layer_comm .d_list_gallery.type_poster strong .d_tag{padding:5px 10px 4px}
+}
+
+
+.d_popup_vod{display: flex;position:fixed;top:0;left:0;right:0;bottom:0;z-index: 9999;background:rgba(0,0,0,.8);opacity: 0;visibility: hidden;transition: all .3s}
+.d_popup_vod.on{opacity: 1;visibility: visible}
+.d_popup_vod .inner_popup{position: relative;width:800px;max-height: calc(100% - 100px);max-width: calc(100% - 100px);margin: auto;text-align: center;aspect-ratio: 16 / 9}
+.d_popup_vod iframe{width:100%;height: 100%;border:0;vertical-align: top}
+.d_popup_vod .btn_close{position: absolute;top:-16px;left: 100%;padding:10px;border:0;font-size:40px;color:#fff;background: none;cursor: pointer}
+.d_popup_vod .btn_close i{pointer-events: none}

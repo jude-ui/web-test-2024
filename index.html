@@ -8,6 +8,7 @@
   <title>TEST</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="./reset.css">
+  <link rel="stylesheet" href="./layer.css">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <style>
     body{padding:20px}
@@ -27,7 +28,7 @@
   </style>
 </head>
 <body>
-  <strong class="title" aria-hidden="true">일반 a 태그</strong>
+  <!--<strong class="title" aria-hidden="true">일반 a 태그</strong>
   <a href="https://www.naver.com">네이버</a>
   <br>
   <br>
@@ -122,9 +123,28 @@
         <td>국어</td>
       </tr>
     </tbody>
-  </table>
+  </table>-->
+  <a href="#none">더미 링크</a>
+
+  <a href="#none" style="padding:10px;background:#fff;color:#000" data-open-layer="guideVod2">클릭</a>
+
+  <div id="guideVod2" class="layer_comm d_popup_vod" data-close-layer>
+    <div class="inner_popup">
+      <p style="color:#fff">
+        일이삼사오 하나둘셋 테스트 중
+      </p>
+      <img src="https://placehold.co/400x300" alt="이미지">
+      <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/BE8FSHBhofY?si=crMPKQ6rjvFPnggR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> -->
+      <button type="button" class="btn_close close_ytb" title="레이어 팝업 닫기" data-close-layer>
+        <i class="fa-regular fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <a href="#none">두번째 링크</a>
 
 
+  <script src="./components.js"></script>
   <script>
     $('.sns').on('click', function(){
       if($(this).attr('aria-expanded') === 'false') {
@@ -144,5 +164,6 @@
       $(this).attr('aria-selected', 'true')
     })
   </script>
+
 </body>
 </html>
