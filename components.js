@@ -382,7 +382,7 @@ const uiCompo = (function () {
       if (isHidden) {
         this.focusFirstElement($layer)
       } else {
-        $layer.one('transitionstart', () => this.focusFirstElement($layer))
+        $layer.one('transitionend', () => this.focusFirstElement($layer))
       }
       
       // 현재 열려 있는 팝업이 있다면 모두 active 해제, 지금 여는 팝업만 active 추가
