@@ -380,7 +380,7 @@ const uiCompo = (function () {
 
       // display:none 체크하여 첫번째 요소로 초점 이동
       if (isHidden) {
-        // this.focusFirstElement($layer)
+        this.focusFirstElement($layer)
       } else {
         $layer.one('transitionstart', () => this.focusFirstElement($layer))
       }
