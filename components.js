@@ -16,183 +16,134 @@ const uiCompo = (function () {
     })
   }
   
-  /**
-   * 1. 접근성 공통 탭 기능
-   * 2. 기본적으로 ul > li > a 구조를 사용하며 a태그의 aria-selected를 사용하는 것을 기본으로 작동됨
-   * 3. 탭패널 연동이 필요할 경우 tabPanel 프로퍼티에 탭 패널 클래스 네이밍 추가
-   * @param {string}   tabList          (필수) ul의 클래스 네이밍
-   * @param {string}   target           (옵션, 기본값 'a') ul요소 하위에 있는 클릭을 하는 요소의 클래스 또는 태그 이름
-   * @param {string}   activeClass      (옵션, 기본값 'on') 클래스 제어시 붙을 클래스 네이밍
-   * @param {string}   container        (옵션, 기본값 '.tab_container') 탭과 탭 패널을 감싸고 있는 특정 탭 컨테이너 요소의 클래스 네이밍
-   * @param {string}   tabPanel         (옵션) 탭 패널 있을 경우 탬 패널의 클래스 네이밍
-   * @param {string}   panelActiveClass (옵션, 기본값 'on') 탭 패널에 붙는 탭 패널 활성 클레스 네이밍
-   * @param {string}   classTarget      (옵션) aria 대신 클래스 제어가 필요할 때 사용 : ul요소 하위에 있되 클래스가 붙을 요소의 클래스 네이밍 또는 태그 이름
-   * @param {function} callback         (옵션) 탭 패널이 전환된 뒤 사용할 수 있는 콜백함수
-   * @param {object}   callbackParams   (옵션) 콜백 함수에 전달될 파라미터들
-   * @param {jQuery}   callbackParams.$self            (옵션) 현재 클릭된 탭 요소의 jQuery 객체
-   * @param {string}   callbackParams.container        (옵션) 탭 컨테이너의 클래스 네이밍
-   * @param {string}   callbackParams.tabPanel         (옵션) 탭 패널의 클래스 네이밍
-   * @param {number}   callbackParams.tabPanelIndex    (옵션) 활성화되는 탭 패널의 인덱스
-   * @param {string}   callbackParams.panelActiveClass (옵션) 탭 패널의 활성 클래스 네이밍
-   */
-  function tabSelect({
-      tabList,
-      target = 'a',
-      activeClass = 'on',
-      container = '.tab_container',
-      tabPanel,
-      panelActiveClass = 'on',
-      classTarget,
-      callback
-    }) {
-
-    $(tabList).each(function(idx, tabListEl) {
-      const $tabListEl = $(tabListEl)
-      const $targets = $tabListEl.find(target)
-      const isHasTabLink = $targets.is('[data-tab-link]')
-      
-      if (isHasTabLink) { // data-tab-link 속성이 있는 탭
-        let tabLinkCount = 0;
-        $targets.each(function(idx, targetEl) {
-          const $targetEl = $(targetEl)
-          
-          // data-tab-link 속성이 있는 targetEl과 없는 targetEl 분기처리
-          if ($targetEl.is('[data-tab-link]')) {
-            tabLinkCount += 1; // data-tab-link 속성이 있는 탭 갯수마다 +1씩
-            $targetEl.on('click', function() {
-              const $self = $(this)
-              const targetAttr = $self.attr('target');
-              if (targetAttr) {
-                window.open($self.attr('href'), targetAttr);
-              } else {
-                window.location.href = $self.attr('href');
-              }
-            })
-          } else {
-            let tabPanelIndex = idx - tabLinkCount; // data-tab-link를 제외한 탭패널의 인덱스
-
-            $targetEl.on('click', function(e) {
-              tabHandler({ e, self: this, tabPanelIndex, $tabListEl })
-            })
-          }
-        })
-      } else { // data-tab-link 속성이 없는 탭
-        const isHasTabLink = $tabListEl.closest('.type_link').length
-        if (isHasTabLink) return; // type_link 클래스가 있는 탭일 경우 모든 탭이 링크 이동 되도록 이곳에서 코드 종료
-
-        $targets.each(function(index, targetEl) {
-          const $targetEl = $(targetEl)
-          $targetEl.on('click', function(e) {
-            tabHandler({ e, self: this, tabPanelIndex: index, $tabListEl })
-          })
-        })
-      }
-    })
-    
-    function tabHandler({ e, self, tabPanelIndex, $tabListEl }) {
-      e.preventDefault()
-      const $self = $(self)
-      const $targets = $self.closest($tabListEl).find(target)
-
-      if (classTarget) {
-        $self.closest($tabListEl).find(classTarget).removeClass(activeClass)
-        $self.closest(classTarget).addClass(activeClass)
-      } else {
-        console.log('test');
-        $targets.attr('aria-selected', 'false')
-        $self.attr('aria-selected', 'true')
-      }
-
-      if (tabPanel) {
-        const $tabPanel = $(tabPanel)
-        const $panels = $self.closest(container).find($tabPanel)
-        $panels.removeClass(panelActiveClass)
-        $panels.eq(tabPanelIndex).addClass(panelActiveClass)
-        if (callback) {
-          callback({ $self, container, tabPanel, tabPanelIndex, panelActiveClass })
-        }
-      }
-    }
-  }
-
   // 공통 - 탭
-  const $tabComm = $('.tab_comm');
-  if ($tabComm.length) {
-    $tabComm.each(function (idx, item) {
+  const TabModule = function (options) {
+    const settings = $.extend({
+      containerClass: '.tab_container', // 탭 컨테이너 클래스
+      groupClass: '.tab_comm', // 탭 그룹 클래스
+      tabListPcClass: '.tab_pc', // PC용 탭 리스트
+      tabListMobileClass: '.tab_m', // 모바일용 탭 리스트
+      tabPanelClass: '.tab_panel', // 탭 패널
+      tabTriggerClass: '.tab', // 탭 버튼
+      titleTabClass: '.tit_tab', // 모바일 타이틀
+      activeClass: 'on', // 활성화 클래스
+      breakPoint: 1024, // 반응형 브레이크포인트
+    }, options);
+
+    const $tabGroups = $(settings.groupClass)
+    
+
+    if ($tabGroups.length) {
       const $window = $(window);
-      const $item = $(item);
-      const text = $item.find('[aria-selected=true]').text();
-      const $titTab = $item.find('.tit_tab');
-      const breakPoint = 1460;
-
-      $titTab.html(text); // 선택된 탭 텍스트 삽입
-
-      // M 탭 클릭 & 화살표 아이콘 제어
-      $titTab.on('click', function (e) {
-        e.preventDefault();
-        const $self = $(this);
-        if ($self.parent().hasClass('on')) {
-          // 열려 있다
-          $self.next().stop().slideUp(300);
-          $self.parent().removeClass('on');
-        } else {
-          // 닫혀 있다
-          $('.tab_comm').removeClass('on').find('.list_tab').stop().slideUp(300)
-          $self.next().stop().slideDown(300)
-          $self.parent().addClass('on')
-        }
-      });
-
-      // M ui 에서 메뉴 펼쳐졌을 때 스타일을 pc 화면(1024px 이상)에서 제거
+      
       let timeoutInfo = null;
-      $window.on('resize', function () {
-        clearTimeout(timeoutInfo);
-        timeoutInfo = setTimeout(styleRemoveHandler, 100);
-      });
-      function styleRemoveHandler() {
-        if ( $window.outerWidth() >= breakPoint ) {
-          $item.find('.list_tab').removeAttr('style'); // 토글 속성 삭제
-          $item.removeClass('on'); // 화살표 아이콘 초기화
-        }
-      }
 
-      // PC, M 탭 클릭
-      $item.find('.list_tab a').on('click', function (e) {
-        const $self = $(this);
-        let txt = $self.text();
-      
-        // 탭 클릭하여 링크 이동이 아닌 경우
-        if (!$self.closest('.tab_comm').hasClass('type_link')) {
+      $tabGroups.each(function () {
+        const $tabGroup = $(this);
+        const $tabsPc = $tabGroup.find(`${settings.tabListPcClass} ${settings.tabTriggerClass}`);
+        const $tabsMobile = $tabGroup.find(`${settings.tabListMobileClass} ${settings.tabTriggerClass}`);
+        const $tabs = $tabsPc.add($tabsMobile);
+        const $container = $tabGroup.parent();
+        const $panels = $container.find(settings.tabPanelClass);
+        const $titleTab = $tabGroup.find(settings.titleTabClass);
+
+        // 초기화: PC에서 선택된 탭 텍스트를 타이틀에 삽입
+        const initTabText = $tabGroup.find(`${settings.tabListPcClass} [aria-selected=true]`).text();
+        $titleTab.html(initTabText);
+
+        // 모바일 타이틀 클릭: 메뉴 토글
+        $titleTab.on('click', function (e) {
           e.preventDefault();
-          if ($self.closest('ul').find('.tab i').length) {
-            const $icon = $self.closest('ul').find('a[aria-selected="true"] i')
-            $icon.prependTo($self)
+          if ($tabGroup.hasClass(settings.activeClass)) {
+            $tabGroup.removeClass(settings.activeClass)
+              .find(settings.tabListMobileClass)
+              .stop()
+              .slideUp(300);
+          } else {
+            $(settings.groupClass)
+              .removeClass(settings.activeClass)
+              .find(settings.tabListMobileClass)
+              .stop()
+              .slideUp(300);
+            $tabGroup.addClass(settings.activeClass)
+              .find(settings.tabListMobileClass)
+              .stop()
+              .slideDown(300);
           }
+        });
 
-          // 탭 선택시 스타일 변경
-          $self.closest('ul').find('a').attr('aria-selected', 'false');
-          $self.attr('aria-selected', 'true');
-      
-          // 선택한 탭의 텍스트를 .tit_tab 요소의 텍스트로 삽입
-          $self.closest('.tab_comm').find('.tit_tab').html(txt);
+        // 화면 리사이즈: 모바일 스타일 초기화
+        $window.on('resize', function () {
+          clearTimeout(timeoutInfo);
+          timeoutInfo = setTimeout(() => {
+            if ($window.outerWidth() >= settings.breakPoint) {
+              $(settings.groupClass).filter(`.${settings.activeClass}`).find(settings.tabListMobileClass).removeAttr('style')
+              $(settings.groupClass).filter(`.${settings.activeClass}`).removeClass(settings.activeClass)
+            }
+          }, 300);
+        });
 
-          // M 탭 ui일 경우(breakPoint 미만) 펼쳐진 탭메뉴를 닫기
-          if ($window.outerWidth() < breakPoint) {
-            $self.closest('ul').slideUp(300).parent().removeClass('on');
+        // 탭 클릭: 탭 및 패널 상태 업데이트
+        $tabs.on('click', function (e) {
+          const $currentTab = $(this);
+          const idx = $currentTab.parent().index();
+          const tabText = $currentTab.text();
+          const tabId = $currentTab.data('tab');
+
+          if ($currentTab.is('[data-tab]')) {
+            e.preventDefault();
+
+            // 모든 탭 비활성화
+            $tabs.attr('aria-selected', 'false');
+
+            // 현재 탭 활성화
+            $tabGroup.find(settings.tabListPcClass + ' li').eq(idx).find(settings.tabTriggerClass).attr('aria-selected', 'true');
+            $tabGroup.find(settings.tabListMobileClass + ' li').eq(idx).find(settings.tabTriggerClass).attr('aria-selected', 'true');
+
+            // 타이틀에 현재 탭 텍스트 삽입
+            $titleTab.html(tabText);
+
+            // 모바일 메뉴 닫기
+            if ($window.outerWidth() < settings.breakPoint) {
+              $tabGroup.find(settings.tabListMobileClass).stop().slideUp(300);
+              $tabGroup.removeClass(settings.activeClass);
+            }
+
+            if ($container.length) {
+              // 모든 패널 숨김
+              $panels.removeClass(settings.activeClass);
+  
+              // 선택된 패널 활성화
+              $panels.filter(`[data-tabpanel="${tabId}"]`).addClass(settings.activeClass);
+            }
           }
-        }
+        });
+
+        // 모바일 외부 클릭: 메뉴 닫기
+        $(document).on('click focusin', function (e) {
+          if (!$tabGroup.has(e.target).length) {
+            $tabGroup.removeClass(settings.activeClass)
+              .find(settings.tabListMobileClass)
+              .stop()
+              .slideUp(300);
+          }
+        });
       });
-    });
-  }
+    }
+  };
 
-  // 탭과 컨테이너 제어 (공통)
-  if ($('.tab_container > .tab_comm .list_tab').length && $('.tab_container .tab_panel').length) {
-    tabSelect({
-      tabList: '.tab_container > .tab_comm .list_tab',
-      container: '.tab_container',
-      tabPanel: '.tab_panel',
-    });
-  }
+  // 탭 플러그인 호출
+  TabModule({
+    containerClass: '.tab_container',
+    groupClass: '.tab_comm',
+    tabListPcClass: '.tab_pc',
+    tabListMobileClass: '.tab_m',
+    tabPanelClass: '.tab_panel',
+    tabTriggerClass: '.tab',
+    titleTabClass: '.tit_tab',
+    activeClass: 'on',
+    breakPoint: 1024,
+  });
 
   // 캘린더 .d_cal_unite
   // const $dCalUnite = $('.d_cal_unite');
@@ -226,35 +177,28 @@ const uiCompo = (function () {
   // 공통 화면 fixed / unfixed
   const fixBody = (function () {
     let currentScrollTop = null;
-    let isFixed = false;
     const $body = $('body');
     const $window = $(window);
 
     function unfix() {
-      if (isFixed) {
-        $body.removeAttr('style');
-        $window.scrollTop(currentScrollTop);
-        isFixed = false
-      }
+      $body.removeAttr('style');
+      $window.scrollTop(currentScrollTop);
     };
 
     function fix(isHidden = false) {
-      if (!isFixed) {
-        const bodyElement = $body.get(0);
-        const hasVerticalOverflow = !isHidden && bodyElement.clientHeight < bodyElement.scrollHeight;
-        currentScrollTop = $window.scrollTop();
-  
-        const styles = {
-          position: 'fixed',
-          top: -currentScrollTop,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          overflowY: hasVerticalOverflow ? 'scroll' : '',
-        }
-        $body.css(styles)
-        isFixed = true
+      const bodyElement = $body.get(0);
+      const hasVerticalOverflow = !isHidden && bodyElement.clientHeight < bodyElement.scrollHeight;
+      currentScrollTop = $window.scrollTop();
+
+      const styles = {
+        position: 'fixed',
+        top: -currentScrollTop,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflowY: hasVerticalOverflow ? 'scroll' : '',
       }
+      $body.css(styles)
     }
     return {
       fix,
@@ -266,209 +210,304 @@ const uiCompo = (function () {
    * LayerComm Class
    * @class
    * @param {Object}  [options] - LayerComm 클래스의 옵션 설정
-   * @param {string}  [options.activeClass] - 레이어 팝업 토글 시키는 클래스 네임
-   * @param {string}  [options.defaultLayerName] - 레이어 팝업의 기본 클래스 네임
-   * @param {Function} [options.commOpenCallback] - 레이어 팝업 공통 Open 콜백 함수
-   * @param {Function} [options.commCloseCallback] - 레이어 팝업 공통 Close 콜백 함수
+   * @param {string}  [options.defaultLayerName] - 레이어 팝업을 작동 시키기 위한 팝업 기본 클래스명
+   * @param {string}  [options.openClass] - 레이어 팝업 토글 시키는 클래스명
+   * @param {string}  [options.activeClass] - 현재 초점이 있는 레이어 팝업에 붙는 클래스명
+   * @param {Function} [options.beforeOpen] - 레이어 팝업 Before Open 콜백 함수
+   * @param {Function} [options.afterOpen] - 레이어 팝업 After Open 콜백 함수
+   * @param {Function} [options.beforeClose] - 레이어 팝업 Before Close 콜백 함수
+   * @param {Function} [options.afterClose] - 레이어 팝업 After Close 콜백 함수
    */
   class LayerComm {
-    constructor(options = {}) {
-      this.activeClass = options.activeClass ? options.activeClass : 'on'
-      this.$openButton = $('[data-open-layer]')
-      this.$closeButton = $('[data-close-layer]')
-      this.defaultLayerName = $.trim(
-        options.defaultLayerName ? `.layer_comm, .d_layer_comm, ${options.defaultLayerName}` : '.layer_comm, .d_layer_comm'
-      )
-      this.commOpenCallback = options.commOpenCallback
-      this.commCloseCallback = options.commCloseCallback
-      this.handleOpenPopup = this.handleOpenPopup.bind(this);
-      this.handleClosePopup = this.handleClosePopup.bind(this);
-      this.popups = {}; // 개별 팝업 콜백 저장 객체
+    constructor(el, options = {}) {
+      this.el = el
+      this.openClass = options.openClass ? options.openClass : 'on'
+      this.activeClass = options.activeClass ? options.activeClass : 'active'
+      this.defaultLayerName = $.trim(el ? el : '')
+      this.layers = {} // 개별 팝업 콜백 저장 객체
+      
+      this._handleOpenLayer = this._handleOpenLayer.bind(this)
+      this._handleCloseLayer = this._handleCloseLayer.bind(this)
+      this._bindKeyEvt = this._bindKeyEvt.bind(this)
 
-      this.currentScrollTop = null;
-      this.isFixed = false;
-      this.$body = $('body');
-      this.$window = $(window);
+      this._currentScrollTop = null
+      this._$body = $('body')
+      this._$window = $(window)
 
-      this.$fstTab = null;
-      this.$lstTab = null;
-      this.bindKeyEvt = this.bindKeyEvt.bind(this)
-      this.currentPopup = null;
+      this.fstTab = null
+      this.lstTab = null
+      this.currentLayer = null
+
+      this.openButton = null
+      this.parentLayer = null
+      this.beforeLayer = null
+
+      this.focusableSelectors = ['a[href]', 'iframe', 'input', 'select', 'textarea', 'button', '[tabindex="0"]', '[contenteditable]']
+
+      this.callbacks = {}
+
+      if (options.on) {
+        for (const [event, callback] of Object.entries(options.on)) {
+          this.on(event, callback)
+        }
+      }
       
       this.init()
     }
 
     init() {
-      const _ = this
-      _.$openButton.each(function () {
-        $(this).off('click', _.handleOpenPopup)
-                .on('click', _.handleOpenPopup)
-      })
+      // 동적 이벤트 할당 코드는 관심강좌 팝업과 같은 상황에 따라 열리는 팝업을 다르게 가져갈 시 주의
+      $(document).on('click', '[data-open-layer]', this._handleOpenLayer)
+                  // .on('click', '[data-open-layer]', this._handleOpenLayer)
+      $(document).on('click', '[data-close-layer]', this._handleCloseLayer)
+                  // .on('click', '[data-close-layer]', this._handleCloseLayer)
+      // $(document).off('keydown', this.defaultLayerName, this._bindKeyEvt)
+                  // .on('keydown', this.defaultLayerName, this._bindKeyEvt)
 
-      $(document).off('click', _.$closeButton, _.handleClosePopup)
-                  .on('click', _.$closeButton, _.handleClosePopup)
+      this._executeCallback(this, 'init')
+    }
+
+    on(event, callback) {
+      if (!this.callbacks[event]) {
+        this.callbacks[event] = []
+      }
+      this.callbacks[event].push(callback)
+    }
+
+    getOpenLayerCount() {
+      const $activePopup = $(this.defaultLayerName).filter(`.${this.openClass}`)
+      const activeClassPopups = $activePopup.length
+      const openDialogs = $('dialog[open]').length
+      return activeClassPopups + openDialogs
+    }
+
+    isBodyFixed() {
+      return this._$body.css('position') === 'fixed'
     }
 
     fix() {
-      if (!this.isFixed) {
-        const isOverflow = document.documentElement.clientHeight < document.documentElement.scrollHeight;
+      if (!this.isBodyFixed()) {
+        const isOverflow = document.documentElement.clientHeight < document.documentElement.scrollHeight
   
-        this.currentScrollTop = this.$window.scrollTop();
+        this._currentScrollTop = this._$window.scrollTop()
         const styles = {
           position: 'fixed',
-          top: -this.currentScrollTop,
+          top: -this._currentScrollTop,
           left: 0,
           right: 0,
           bottom: 0,
           overflowY: isOverflow ? 'scroll' : '',
         }
-        this.$body.css(styles)
-        this.isFixed = true
+        this._$body.css(styles)
       }
     }
 
     unfix() {
-      if (this.isFixed) {
-        this.$body.removeAttr('style');
-        this.$window.scrollTop(this.currentScrollTop);
-        this.isFixed = false
+      if (this.isBodyFixed() && this.getOpenLayerCount() === 1) {
+        this._$body.removeAttr('style')
+        this._$window.scrollTop(this._currentScrollTop)
       }
     }
 
-    handleOpenPopup(e) {
-      if ($(e.target).is('[data-open-layer]')) e.preventDefault();
-      
-      const layerPopupId = $(e.currentTarget).data('openLayer')
-      const $popup = $(`#${layerPopupId}`)
-      this.open($popup)
+    _handleOpenLayer(e) {
+      e.preventDefault();
+
+      const layerId = $(e.currentTarget).data('openLayer')
+      if (!(typeof layerId === 'undefined' || layerId === "")) {
+        let $layer = $(`#${layerId}`)
+        if ($layer.closest(this.el).length) {
+          this.open($layer)
+        }
+      }
     }
 
-    handleClosePopup(e) {
-      if ($(e.target).is('[data-close-layer]')) e.preventDefault();
+    _handleCloseLayer(e) {
+      e.stopPropagation()
+      const $target = $(e.target)
 
       // 클릭한 요소가 [data-close-layer] 일 경우
-      if ($(e.target).is('[data-close-layer]')) {
-        const $popup = $(e.target).closest(this.defaultLayerName);
-        
-        this.close($popup)
+      if ($target.is('[data-close-layer]')) {
+        e.preventDefault()
+        let $layer = $target.closest(this.defaultLayerName)
+        if ($layer.closest(this.el).length) {
+          this.close($layer)
+        }
       }
     }
-    open($popup) {
-      this.currentPopup = $popup;
-      if ($popup.prop('tagName') === 'DIALOG') {
-        $popup.get(0).showModal()
+    
+    togglePopup($layer, action) {
+      if (action === 'open') {
+        if ($layer.prop('tagName') === 'DIALOG') {
+          $layer.get(0).showModal()
+        } else {
+          $layer.addClass(this.openClass)
+        }
       } else {
-        $popup.addClass(this.activeClass)
+        if ($layer.prop('tagName') === 'DIALOG') {
+          $layer.get(0).close()
+        } else {
+          $layer.removeClass(this.openClass)
+        }
       }
-      $popup.one('transitionend', () => {
-        this.focusFirstElement($popup)
-        $popup.on('keydown', this.bindKeyEvt);
-      })
+    }
+
+    _$openButton($layer) {
+      return $(`[data-open-layer="${$layer.attr('id')}"]`)
+    }
+
+    _$parentLayer($layer) {
+      return this._$openButton($layer).closest(this.defaultLayerName)
+    }
+    
+    _$beforeLayer($layer) {
+      return $(`#${$layer.attr('id')}`)
+    }
+
+    open($layer) {
+      this._executeCallback(this, 'beforeOpen') // 콜백
+      
+      this.currentLayer = $layer
+      this.openButton = this._$openButton($layer).get(0)
+      this.parentLayer = this._$parentLayer($layer).get(0)
+
+      const isHidden = $layer.css('display') === 'none'
+
+      // body 고정 유무 체크 후, body 고정
       this.fix()
-      this._executeCallback($popup, 'open')
-    }
-    
-    close($popup) {
-      if ($popup.prop('tagName') === 'DIALOG') {
-        $popup.get(0).close()
+
+      // 팝업 종류 체크하여 Open
+      this.togglePopup($layer, 'open')
+
+      // display:none 체크하여 첫번째 요소로 초점 이동
+      if (isHidden) {
+        // this.focusFirstElement($layer)
       } else {
-        $popup.removeClass(this.activeClass)
+        $layer.one('transitionstart', () => this.focusFirstElement($layer))
       }
-      $popup.off('keydown', this.bindKeyEvt);
+      
+      // 현재 열려 있는 팝업이 있다면 모두 active 해제, 지금 여는 팝업만 active 추가
+      this._$parentLayer($layer).removeClass(this.activeClass)
+      $layer.addClass(this.activeClass)
+
+      this._executeCallback(this, 'afterOpen') // 콜백
+    }
+
+    close($layer, target) {
+      this._executeCallback(this, 'beforeClose') // 콜백
+
+      this.currentLayer = $layer
+      this.openButton = this._$openButton($layer).get(0)
+      this.parentLayer = this._$parentLayer($layer).get(0)
+      this.beforeLayer = this._$beforeLayer($layer).get(0)
+      
+      let $parentLayer = null
+
+      if (target) {
+        $parentLayer = this._$parentLayer($(target).closest(this.defaultLayerName))
+      } else {
+        $parentLayer = this._$parentLayer($layer)
+      }
+
+      // open된 팝업 수와 body 고정 유무 체크 후, body 고정 해제
       this.unfix()
-      $(`[data-open-layer="${$popup.attr('id')}"]`).focus()
-      this._executeCallback($popup, 'close')
-      this.currentPopup = null;
-    }
 
-    focusFirstElement($popup) {
-      const focusableSelectors = 'a[href], iframe, input, select, textarea, button, [tabindex="0"], [contenteditable]';
-      const $focusable = $popup.find(focusableSelectors).not('[disabled], [tabindex="-1"], :hidden')
-      this.$fstTab = $focusable[0]
-      this.$lstTab = $focusable[$focusable.length - 1]
+      // 현재 닫은 팝업은 active 삭제
+      $layer.removeClass(this.activeClass)
 
-      if (this.$fstTab === this.$lstTab) {
-        this.$lstTab = null
+      // 팝업 종류 체크하여 Close
+      this.togglePopup($layer, 'close')
+
+      // 팝업 열었던 버튼으로 초점 이동
+      if (this._$openButton($layer).length) this._$openButton($layer).focus()
+      
+      // 닫은 팝업의 open 버튼이 또다른 팝업 안에 존재 한다면
+      if ($parentLayer.length) {
+        $parentLayer.addClass(this.activeClass) // 현재 팝업에 active 클래스 추가
+        this.currentLayer = $parentLayer // 팝업 초기화
+        this.focusFirstElement(this.currentLayer) // 현재 팝업 첫번째 초점에 초점이동
+      } else {
+        this.currentLayer = null
       }
-      this.$fstTab.focus()
+
+      this._executeCallback(this, 'afterClose') // 콜백
     }
 
-    bindKeyEvt(e) {
-      const keycode = e.keycode || e.which;
-      const $target = e.target;
-    
+    focusFirstElement($layer) {
+      const $focusable = $layer.find(this.focusableSelectors.join()).not('[disabled], [tabindex="-1"], :hidden')
+      this.fstTab = $focusable[0]
+      this.lstTab = $focusable[$focusable.length - 1]
+
+      if (this.fstTab === this.lstTab) {
+        this.lstTab = null
+      }
+      if (this.fstTab) this.fstTab.focus()
+    }
+
+    _bindKeyEvt(e) {
+      const keycode = e.keycode || e.which
+      const target = e.target
+      
       switch (keycode) {
         case 9:  // tab key
-          if (this.$fstTab && this.$lstTab) {
-            if (e.shiftKey) {
-              if (this.$fstTab && $target == this.$fstTab) {
-                e.preventDefault();
-                if (this.$lstTab) this.$lstTab.focus();
+          if (this.fstTab && this.lstTab) { // 포커스 가능 요소가 2개 이상
+            if (e.shiftKey) { // 뒤로 탭
+              if (this.fstTab && target == this.fstTab) { // 첫번째 탭 가능 요소일 경우
+                e.preventDefault()
+                if (this.lstTab) this.lstTab.focus()
               }
-            } else {
-              if (this.$lstTab && $target == this.$lstTab) {
-                e.preventDefault();
-                if (this.$fstTab) this.$fstTab.focus();
+              
+            } else { // 앞으로 탭
+              if (this.lstTab && target == this.lstTab) { // 마지막 탭 가능 요소일 경우
+                e.preventDefault()
+                if (this.fstTab) this.fstTab.focus()
               }
             }
           } else {
-            e.preventDefault();
+            e.preventDefault()
           }
-          break;
+          break
         case 27:  // esc key
-          e.preventDefault();
-          this.close(this.currentPopup)
-          break;
+          e.preventDefault()
+
+          this.close(this.currentLayer, target)
+          break
         default:
-          break;
+          break
       }
     }
 
-    callback({ layerName, openCallback, closeCallback }) {
-      this.popups[layerName.replace('#', '')] = { openCallback, closeCallback }
-    }
-
-    _executeCallback($popup, action) {
-      // 공통 콜백 처리
-      const commonCallback = action === 'open' ? this.commOpenCallback : this.commCloseCallback
-      if (typeof commonCallback === 'function') {
-        commonCallback($popup, this.activeClass, this.defaultLayerName)
-      }
-  
-      // 개별 팝업 콜백 처리
-      const popupId = $popup.attr('id');
-      const popupCallback = this.popups[popupId] ? this.popups[popupId][`${action}Callback`] : null
-      if (typeof popupCallback === 'function') {
-        popupCallback($popup, this.activeClass, this.defaultLayerName)
+    _executeCallback(self, action) {
+      if (this.callbacks[action]) {
+        this.callbacks[action].forEach(callback => callback(self))
       }
     }
   }
 
   // 공통 콜백 함수 설정
-  const layerComm = new LayerComm({
-    /**
-     * 
-     * @param {jQuery} $popup 팝업 레이어
-     * @param {string} activeClass 팝업 활성 클래스
-     * @param {string} defaultLayerName 기본 레이어 팝업 네이밍
-     */
-    commOpenCallback: $popup => {
-      // console.log('공통 open', $popup)
-    },
-    commCloseCallback: $popup => {
-      // console.log('공통 close', $popup)
-    },
+  const layerComm = new LayerComm('.layer_comm, .d_layer_comm', {
+    on: {
+      init: self => {
+        // console.log('init', self);
+      },
+      beforeOpen: self => {
+        // console.log('beforeOpen', self)
+      },
+      afterOpen: self => {
+        // console.log('afterOpen', self)
+      },
+      beforeClose: self => {
+        // console.log('beforeClose', self)
+      },
+      afterClose: self => {
+        // console.log('afterClose', self)
+      },
+    }
   })
+  const layerComm2 = new LayerComm('#favor')
 
   // 개별 콜백 함수 설정 (개별 페이지 최하단 script 태그에 삽입)
-  // uiCompo.layerComm.callback({
-  //   layerName: '#layerTest', // 개별 콜백함수처리할 팝업 id 값
-  //   openCallback: $popup => { // 개별 open 콜백
-  //     console.log('개별 open', $popup);
-  //   },
-  //   closeCallback: $popup => { // 개별 close 콜백
-  //     console.log('개별 close', $popup);
-  //   }
+  // layerComm.on('beforeOpen', function ($popup) {
+  //   console.log('개별 beforeOpen', $popup)
   // })
 
 
@@ -644,8 +683,7 @@ const uiCompo = (function () {
   })
 
   return {
-    tabSelect,
+    // tabSelect,
     fixBody,
-    layerComm,
   }
 })();
