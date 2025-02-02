@@ -157,25 +157,38 @@
 
 
 
-  <h2 id="rotate"></h2>
-  <h2 id="lr"></h2>
-  <h2 id="fb"></h2>
+  <button id="requestPermission">센서 활성화</button>
+  <h2 id="rotate">Z축: </h2>
+  <h2 id="lr">X축: </h2>
+  <h2 id="fb">Y축: </h2>
 
 
 
   <script>
-    window.addEventListener("deviceorientation", (e) => {
-      const rotate = document.querySelector('#rotate')
-      const lr = document.querySelector('#lr')
-      const fb = document.querySelector('#fb')
-      // let direction = e.alpha; // 0~360도 (북쪽 기준)
-      const rotateDegrees = e.alpha; // alpha: rotation around z-axis
-      const leftToRight = e.gamma; // gamma: left to right
-      const frontToBack = e.beta; // beta: front back motion
+    document.querySelector("#requestPermission").addEventListener("click", () => {
+      if (typeof DeviceOrientationEvent.requestPermission === "function") {
+        DeviceOrientationEvent.requestPermission().then((permissionState) => {
+          if (permissionState === "granted") {
+            window.addEventListener("deviceorientation", (e) => {
+              const rotate = document.querySelector("#rotate");
+              const lr = document.querySelector("#lr");
+              const fb = document.querySelector("#fb");
 
-      rotate.innerHTML = rotateDegrees
-      lr.innerHTML = leftToRight
-      fb.innerHTML = frontToBack
+              const rotateDegrees = e.alpha; // Z축 회전
+              const leftToRight = e.gamma; // X축 기울기
+              const frontToBack = e.beta; // Y축 기울기
+
+              rotate.innerHTML = `Z축: ${rotateDegrees.toFixed(2)}°`;
+              lr.innerHTML = `X축: ${leftToRight.toFixed(2)}°`;
+              fb.innerHTML = `Y축: ${frontToBack.toFixed(2)}°`;
+            });
+          } else {
+            alert("권한이 거부되었습니다.");
+          }
+        }).catch(console.error);
+      } else {
+        alert("이 브라우저에서는 지원되지 않습니다.");
+      }
     });
   </script>
 
