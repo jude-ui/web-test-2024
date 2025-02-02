@@ -157,10 +157,6 @@
 
 
 
-  <!-- <button id="requestPermission">센서 활성화</button>
-  <h2 id="rotate">Z축: </h2>
-  <h2 id="lr">X축: </h2>
-  <h2 id="fb">Y축: </h2> -->
   <h2 id="road_address">도로명 주소 : <span></span></h2>
   <h2 id="address">지번 주소 : <span></span></h2>
   <div id="map" class="mt20" style="height:400px"></div>
@@ -188,8 +184,12 @@
           .then(data => {
             console.log(data.documents[0]);
 
-            road_address.innerHTML = data.documents[0].road_address.address_name
-            address.innerHTML = data.documents[0].address.address_name
+            if(data.documents[0].road_address){
+              road_address.innerHTML = data.documents[0].road_address.address_name
+            }
+            if(data.documents[0].address){
+              address.innerHTML = data.documents[0].address.address_name
+            }
           })
           .catch(error => {
             console.log(error);
