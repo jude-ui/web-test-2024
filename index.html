@@ -160,20 +160,21 @@
     .tc{text-align: center}
     #map{height: 400px;margin: 20px 0;border:1px solid #ddd}
     .txt_address{margin:5px 0;font-size: 18px;line-height: 23px;color:#000}
-    .tit{display: block;padding-top:20px;font-size: 18px;line-height: 23px;color:#000}
+    .tit{display: block;font-size: 18px;line-height: 23px;color:#000}
+    .tit ~ .tit{padding-top: 20px}
     .list_road{padding-top: 10px}
     .list_road li{font-size: 15px;line-height: 20px;color:#242424}
     .list_road li + li{padding-top: 10px}
     .list_road a{font-weight: 700;color:#325ee4;text-decoration: underline}
     .list_road span{font-size: 0.8em}
     
-    .tbl_comm{width:100%;margin-top: 10px;border-collapse: collapse;border-spacing: 0;table-layout: fixed}
-    .tbl_comm th, .tbl_comm td{height: 30px;padding:5px 8px 4px;border-top: 1px solid #ddd;border-right: 1px solid #ddd;font-size: 14px;line-height: 17px;color:#000}
+    .tbl_comm{width:100%;margin-top: 5px;border-collapse: collapse;border-spacing: 0;table-layout: fixed}
+    .tbl_comm th, .tbl_comm td{height: 30px;padding:5px 8px 4px;border-top: 1px solid #ddd;border-right: 1px solid #ddd;font-size: 14px;line-height: 17px;color:#000;word-break: keep-all}
     .tbl_comm td:last-child{border-right: 0}
     .tbl_comm tr:last-child th, .tbl_comm tr:last-child td{border-bottom: 1px solid #ddd}
 
     .tbl_comm th{background-color: #fafafa}
-    .tbl_comm td{font-size: 14px;color:#333}
+    .tbl_comm td{font-size: 14px;color:#000}
     .tbl_comm a{font-weight: 700;color:#0d7b29;text-decoration: underline;text-underline-offset: 2px}
 
     .link_env{display: inline-block;margin: 20px 0 50px;padding:5px 0;vertical-align: top;text-decoration: underline}
@@ -182,8 +183,28 @@
   
   
   <div id="map"></div>
-  <h2 id="road_address" class="txt_address">도로명 주소 : <span>...</span></h2>
-  <h2 id="address" class="txt_address">지번 주소 : <span>...</h2>
+  <strong class="tit"># 현재 위치</strong>
+  <!-- <h2 id="road_address" class="txt_address">도로명 주소 : <span>...</span></h2> -->
+  <!-- <h2 id="address" class="txt_address">지번 주소 : <span>...</h2> -->
+
+  <table class="tbl_comm">
+    <caption class="ir_caption">동물 보호센터</caption>
+    <colgroup>
+      <col style="width:25%">
+      <col>
+    </colgroup>
+    <tbody>
+      <tr>
+        <th scope="row">도로명 주소</th>
+        <td id="road_address">...</td>
+      </tr>
+      <tr>
+        <th scope="row">지번 주소</th>
+        <td id="address">...</td>
+      </tr>
+    </tbody>
+  </table>
+
   <strong class="tit"># 동물이 로드킬로 죽었을 때</strong>
   <ol class="list_road">
     <li>
@@ -216,7 +237,7 @@
       <tr>
         <th scope="row">인천</th>
         <td><a href="tel:032-858-9702">032-858-9702</a></td>
-        <th scope="row">경기<br>북부</th>
+        <th scope="row">경기 북부</th>
         <td><a href="tel:031-8030-4451">031-8030-4451</a></td>
       </tr>
       <tr>
@@ -278,8 +299,8 @@
         
         mapRender(lat, lng)
 
-        const road_address = document.querySelector('#road_address span')
-        const address = document.querySelector('#address span')
+        const road_address = document.querySelector('#road_address')
+        const address = document.querySelector('#address')
         const url = `//dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`;
 
         fetch(url, {
