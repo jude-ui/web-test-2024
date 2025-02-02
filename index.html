@@ -124,7 +124,10 @@
       </tr>
     </tbody>
   </table>-->
-  <a href="#none">더미 링크</a>
+  
+  
+  <!-- 팝업 테스트 -->
+  <!--<a href="#none">더미 링크</a>
 
   <a href="#none" style="padding:10px;background:#fff;color:#000" data-open-layer="guideVod2">팝업 열기</a>
 
@@ -139,14 +142,44 @@
         일이삼사오 하나둘셋 테스트 중
       </p>
       <img src="./bnr.jpg" alt="배너">
-      <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/BE8FSHBhofY?si=crMPKQ6rjvFPnggR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> -->
+      <!~~ <iframe width="560" height="315" src="https://www.youtube.com/embed/BE8FSHBhofY?si=crMPKQ6rjvFPnggR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> ~~>
       <button type="button" class="btn_close close_ytb" title="레이어 팝업 닫기" data-close-layer>
         <i class="fa-regular fa-xmark" aria-hidden="true"></i>
       </button>
     </div>
   </div>
 
-  <a href="#none">두번째 링크</a>
+  <a href="#none">두번째 링크</a>-->
+  <!-- // 팝업 테스트 -->
+
+
+
+
+
+
+  <h2 id="rotate"></h2>
+  <h2 id="lr"></h2>
+  <h2 id="fb"></h2>
+
+
+
+  <script>
+    window.addEventListener("deviceorientation", (e) => {
+      const rotate = document.querySelector('#rotate')
+      const lr = document.querySelector('#lr')
+      const fb = document.querySelector('#fb')
+      // let direction = e.alpha; // 0~360도 (북쪽 기준)
+      const rotateDegrees = e.alpha; // alpha: rotation around z-axis
+      const leftToRight = e.gamma; // gamma: left to right
+      const frontToBack = e.beta; // beta: front back motion
+
+      rotate.innerHTML = rotateDegrees
+      lr.innerHTML = leftToRight
+      fb.innerHTML = frontToBack
+    });
+  </script>
+
+
 
 
   <script src="./components.js"></script>
