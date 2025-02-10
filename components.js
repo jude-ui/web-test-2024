@@ -213,10 +213,10 @@ const uiCompo = (function () {
    * @param {string}  [options.defaultLayerName] - 레이어 팝업을 작동 시키기 위한 팝업 기본 클래스명
    * @param {string}  [options.openClass] - 레이어 팝업 토글 시키는 클래스명
    * @param {string}  [options.activeClass] - 현재 초점이 있는 레이어 팝업에 붙는 클래스명
-   * @param {Function} [options.beforeOpen] - 레이어 팝업 Before Open 콜백 함수
-   * @param {Function} [options.afterOpen] - 레이어 팝업 After Open 콜백 함수
-   * @param {Function} [options.beforeClose] - 레이어 팝업 Before Close 콜백 함수
-   * @param {Function} [options.afterClose] - 레이어 팝업 After Close 콜백 함수
+   * @param {Function} [options.beforeOpen] - 레이어 팝업 열기 전 콜백 함수
+   * @param {Function} [options.afterOpen] - 레이어 팝업 열고난 뒤 콜백 함수
+   * @param {Function} [options.beforeClose] - 레이어 팝업 닫기 전 콜백 함수
+   * @param {Function} [options.afterClose] - 레이어 팝업 닫고난 후 콜백 함수
    */
   class LayerComm {
     constructor(el, options = {}) {
@@ -228,7 +228,6 @@ const uiCompo = (function () {
       
       this._handleOpenLayer = this._handleOpenLayer.bind(this)
       this._handleCloseLayer = this._handleCloseLayer.bind(this)
-      this._bindKeyEvt = this._bindKeyEvt.bind(this)
 
       this._currentScrollTop = null
       this._$body = $('body')
@@ -258,11 +257,7 @@ const uiCompo = (function () {
     init() {
       // 동적 이벤트 할당 코드는 관심강좌 팝업과 같은 상황에 따라 열리는 팝업을 다르게 가져갈 시 주의
       $(document).on('click', '[data-open-layer]', this._handleOpenLayer)
-                  // .on('click', '[data-open-layer]', this._handleOpenLayer)
       $(document).on('click', '[data-close-layer]', this._handleCloseLayer)
-                  // .on('click', '[data-close-layer]', this._handleCloseLayer)
-      // $(document).off('keydown', this.defaultLayerName, this._bindKeyEvt)
-                  // .on('keydown', this.defaultLayerName, this._bindKeyEvt)
 
       this._executeCallback(this, 'init')
     }
@@ -443,39 +438,6 @@ const uiCompo = (function () {
       if (this.fstTab) this.fstTab.focus()
     }
 
-    _bindKeyEvt(e) {
-      const keycode = e.keycode || e.which
-      const target = e.target
-      
-      switch (keycode) {
-        case 9:  // tab key
-          if (this.fstTab && this.lstTab) { // 포커스 가능 요소가 2개 이상
-            if (e.shiftKey) { // 뒤로 탭
-              if (this.fstTab && target == this.fstTab) { // 첫번째 탭 가능 요소일 경우
-                e.preventDefault()
-                if (this.lstTab) this.lstTab.focus()
-              }
-              
-            } else { // 앞으로 탭
-              if (this.lstTab && target == this.lstTab) { // 마지막 탭 가능 요소일 경우
-                e.preventDefault()
-                if (this.fstTab) this.fstTab.focus()
-              }
-            }
-          } else {
-            e.preventDefault()
-          }
-          break
-        case 27:  // esc key
-          e.preventDefault()
-
-          this.close(this.currentLayer, target)
-          break
-        default:
-          break
-      }
-    }
-
     _executeCallback(self, action) {
       if (this.callbacks[action]) {
         this.callbacks[action].forEach(callback => callback(self))
@@ -503,8 +465,6 @@ const uiCompo = (function () {
       },
     }
   })
-  const layerComm2 = new LayerComm('#favor')
-
   // 개별 콜백 함수 설정 (개별 페이지 최하단 script 태그에 삽입)
   // layerComm.on('beforeOpen', function ($popup) {
   //   console.log('개별 beforeOpen', $popup)
