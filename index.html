@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
   <meta name="format-detection" content="telephone=no"><!-- 아이폰에서 일반숫자나, Datetime 등의 타입 전화번호 인식 방지 -->
   <title>TEST 123</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -12,7 +12,7 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <style>
     body{padding:16px}
-    .title{display: block;font-weight: 900;font-size: 20px;line-height: 1.3;color:royalblue}
+    .title{display: block;padding-bottom: 5px;font-weight: 900;font-size: 20px;line-height: 1.3;color:royalblue}
     a{font-size: 16px}
 
     .sns{display: inline-flex;align-items: center;justify-content: center;padding:5px 10px;border:1px solid #000;border-radius: 5px;vertical-align: top}
@@ -22,9 +22,12 @@
     .sns[aria-expanded="true"] + .list_sns{display: block}
     .tab{display: flex;gap:10px;flex-wrap: wrap;padding:10px 0 0}
     .tab a{display: block;padding:5px 10px;border:1px solid #000}
-    .tab a[aria-selected="true"]{border-color:#0e62fb;font-weight: 700;color:#fff;background: #0e62fb}
+    .tab li.on a{border-color:#0e62fb;font-weight: 700;color:#fff;background: #0e62fb}
     .tbl{width: 100%;max-width:300px;border-top:1px solid #000;border-left: 1px solid #000}
     .tbl th, .tbl td{padding:7px;font-size: 16px;line-height: 1.3;border-bottom: 1px solid #000;border-right: 1px solid #000}
+    .tbl th{background-color: #ddd}
+    .tbl2{max-width: 400px}
+    .txt_caption{padding:10px 0 5px;font-size: 16px;line-height: 19px;color:#333;font-weight: 700}
   </style>
 </head>
 <body>
@@ -32,9 +35,11 @@
   <a href="https://www.naver.com">네이버</a>
   <br>
   <br>
+  <br>
 
-  <strong class="title" aria-hidden="true">role 속성이 버튼인 a 태그</strong>
+  <strong class="title" aria-hidden="true">role 속성이 &lsquo;button&rsquo;인 a 태그</strong>
   <a href="#none" role="button">공지사항</a>
+  <br>
   <br>
   <br>
   
@@ -48,24 +53,26 @@
   </ul>
   <br>
   <br>
+  <br>
 
   <strong class="title" aria-hidden="true">탭 접근성 보완하기</strong>
   <ul role="tablist" class="tab">
-    <li role="presentation"><a href="#none" role="tab" aria-selected="true">종합</a></li>
-    <li role="presentation"><a href="#none" role="tab" aria-selected="false">영상</a></li>
-    <li role="presentation"><a href="#none" role="tab" aria-selected="false">축구</a></li>
-    <li role="presentation"><a href="#none" role="tab" aria-selected="false">야구</a></li>
-    <li role="presentation"><a href="#none" role="tab" aria-selected="false">골프</a></li>
-    <li role="presentation"><a href="#none" role="tab" aria-selected="false">농구</a></li>
-    <li role="presentation"><a href="#none" role="tab" aria-selected="false">배구</a></li>
+    <li role="presentation" class="on"><a href="#none" role="tab" title="선택됨">종합</a></li>
+    <li role="presentation"><a href="#none" role="tab">영상</a></li>
+    <li role="presentation"><a href="#none" role="tab">축구</a></li>
+    <li role="presentation"><a href="#none" role="tab">야구</a></li>
+    <li role="presentation"><a href="#none" role="tab">골프</a></li>
+    <li role="presentation"><a href="#none" role="tab">농구</a></li>
+    <li role="presentation"><a href="#none" role="tab">배구</a></li>
   </ul>
 
+  <br>
   <br>
   <br>
 
   <strong class="title" aria-hidden="true">간단한 table</strong>
   <table class="tbl">
-    <caption class="blind">이 표는 제목이 숨겨져 있습니다.</caption>
+    <caption class="txt_caption">요일별 수업 과목명</caption>
     <colgroup>
       <col>
       <col>
@@ -90,58 +97,66 @@
 
   <br>
   <br>
+  <br>
 
   <strong class="title" aria-hidden="true">복잡한 table</strong>
-  <table class="tbl">
-    <caption class="blind">이 표는 제목이 숨겨져 있습니다.</caption>
+  <table class="tbl tbl2">
+    <caption class="txt_caption">학년별 학생 수 현황 (2025년 기준)</caption>
+    
     <colgroup>
-      <col>
-      <col>
-      <col>
+      <col style="width: 18%;">
+      <col style="width: 22%;">
+      <col style="width: 30%;">
+      <col style="width: 30%;">
     </colgroup>
+
     <thead>
       <tr>
-        <th scope="col"></th>
-        <th scope="col">월요일</th>
-        <th scope="col">화요일</th>
+        <th scope="col" id="school" colspan="2">학교 / 학년</th>
+        <th scope="col" id="male">남학생</th>
+        <th scope="col" id="female">여학생</th>
       </tr>
     </thead>
+
     <tbody>
       <tr>
-        <th scope="row">1교시</th>
-        <td>국어</td>
-        <td>수학</td>
+        <th scope="row" id="mainSchool" rowspan="3">본교</th>
+        
+        <th scope="row" id="grade1" headers="school mainSchool">1학년</th>
+        <td headers="school mainSchool grade1 male">128명</td>
+        <td headers="school mainSchool grade1 female">115명</td>
       </tr>
+      
       <tr>
-        <th scope="row">2교시</th>
-        <td>영어</td>
-        <td>체육</td>
+        <th scope="row" id="grade2" headers="school mainSchool">2학년</th>
+        <td headers="school mainSchool grade2 male">135명</td>
+        <td headers="school mainSchool grade2 female">120명</td>
       </tr>
+      
       <tr>
-        <th scope="row">3교시</th>
-        <td>수학</td>
-        <td>국어</td>
+        <th scope="row" id="grade3" headers="school mainSchool">3학년</th>
+        <td headers="school mainSchool grade3 male">142명</td>
+        <td headers="school mainSchool grade3 female">118명</td>
       </tr>
     </tbody>
   </table>
 
   <script>
-    $('.sns').on('click', function(){
-      if($(this).attr('aria-expanded') === 'false') {
-        $(this).attr('aria-expanded', 'true')
+    $('.sns').on('click', function(e){
+      e.preventDefault();
+      const $self = $(this)
+
+      if($self.attr('aria-expanded') === 'false') {
+        $self.attr('aria-expanded', 'true')
       } else {
-        $(this).attr('aria-expanded', 'false')
+        $self.attr('aria-expanded', 'false')
       }
     })
-    // $('.toggle').on('click', function(){
-    //   $(this).attr('aria-expanded', function(_, attr) {
-    //     return attr === 'false' ? 'true' : 'false';
-    //   });
-    // });
 
-    $('.tab a').on('click', function() {
-      $('.tab a').attr('aria-selected', 'false')
-      $(this).attr('aria-selected', 'true')
+    $('.tab a').on('click', function(e) {
+      e.preventDefault();
+      $('.tab li').removeClass('on').find('a').removeAttr('title')
+      $(this).parent().addClass('on').find('a').attr('title', '선택됨')
     })
   </script>
 
